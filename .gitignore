@@ -1,0 +1,60 @@
+# Ignore build outputs
+bin/
+obj/
+
+# Ignore user-specific files
+*.user
+*.csproj.user
+*.vspscc
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Ignore Visual Studio folders
+.vs/
+
+# Ignore Visual Studio Code workspace settings
+.vscode/
+.vscode/settings.json
+.vscode/tasks.json
+.vscode/launch.json
+
+# Ignore Rider project files
+.idea/
+
+# Ignore logs and databases
+*.log
+*.db
+*.sqlite
+*.sqlite3
+
+# Ignore temporary files
+*.tmp
+*.temp
+*.bak
+
+# Ignore runtime-generated files
+wwwroot/js/
+wwwroot/lib/
+
+# Ignore system-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore publish output
+publish/
+
+# Ignore node_modules if using npm
+node_modules/
+
+# Ignore environment files
+.env
+.env.*.local
+
+# Ignore package-lock.json if you are using npm or yarn
+package-lock.json
+yarn.lock
+
+# Ignore Docker-specific files
+Dockerfile
+docker-compose.yml

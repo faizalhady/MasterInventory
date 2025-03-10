@@ -10,6 +10,8 @@ try
     SapEamProcessorTest.Process();
     WorkcellUpdater.UpdateWorkcellColumn();
     //  Console.WriteLine();
+    // var result = await EmailServices.SendCustomEmail(); // No need to create an instance
+    // Console.WriteLine(result.msg);
 
 
 

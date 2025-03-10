@@ -1,0 +1,72 @@
+private static void ProcessFile(string[] headers, Func<int, string[]> getRowValues, int lastRow)
+{
+    using var dbContext = new MasterDbContext();
+    var dbRows = dbContext.SapEamTest.ToList(); // Fetch all rows from the database
+    var dbKeys = dbRows.Select(r => r.Equipment).ToHashSet(); // Use Equipment as the unique identifier
+
+    var fileKeys = new HashSet<string>(); // Track unique identifiers from the file
+
+    // Mapping Excel headers to database properties
+    var headerToPropertyMap = new Dictionary<string, string>
+    {
+        { "Equipment", "Equipment" },
+        { "Serial Number", "SerialNumber" },
+        { "Description", "Description" },
+        { "Location", "Location" },
+        { "Manufacturer", "Manufacturer" },
+        { "Acquisition Date", "AcquisitionDate" }
+        // Add other mappings as needed
+    };
+
+    for (int rowNumber = 2; rowNumber <= lastRow; rowNumber++)
+    {
+        var values = getRowValues(rowNumber);
+
+        if (values.All(string.IsNullOrWhiteSpace)) continue; // Skip empty rows
+
+        // Get the unique key (e.g., Equipment)
+        var uniqueKey = values[Array.IndexOf(headers, "Equipment")]; // Replace "Equipment" with "SerialNumber" if needed
+        fileKeys.Add(uniqueKey); // Add to fileKeys for comparison
+
+        // Check if the row exists in the database
+        var dbRow = dbRows.FirstOrDefault(r => r.Equipment == uniqueKey);
+
+        if (dbRow != null)
+        {
+            // Update existing row
+            UpdateRow(headers, values, dbRow, dbContext);
+        }
+        else
+        {
+            // Insert new row
+            InsertNewRow(headers, values, dbContext);
+        }
+    }
+
+    // Handle deletions: Identify rows in DB but not in the file
+    var deletedKeys = dbKeys.Except(fileKeys);
+
+    foreach (var deletedKey in deletedKeys)
+    {
+        var dbRow = dbRows.First(r => r.Equipment == deletedKey);
+
+        // Remove the row from the database
+        dbContext.SapEamTest.Remove(dbRow);
+
+        // Log the deletion
+        dbContext.ChangeLogs.Add(new ChangeLogs
+        {
+            EntityId = dbRow.Id,
+            ColumnName = "N/A",
+            OldValue = "Row existed",
+            NewValue = "Row deleted",
+            ChangeType = "Delete",
+            Timestamp = DateTime.UtcNow
+        });
+
+        Console.WriteLine($"Row deleted: {deletedKey}");
+    }
+
+    dbContext.SaveChanges(); // Commit changes
+    Console.WriteLine("File processed successfully.");
+}

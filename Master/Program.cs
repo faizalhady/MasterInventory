@@ -1,7 +1,32 @@
-﻿using Master.Services;
+﻿
+using Master.Services;
+using System;
+using System.Threading.Tasks;
+using CratePilotSystemWS.Services.Email;
 
-// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+try
+{
+    //  Console.WriteLine();
+    SapEamProcessorTest.Process();
+    WorkcellUpdater.UpdateWorkcellColumn();
+    //  Console.WriteLine();
 
 
-CsvFileProcessor.ProcessCsvFile();
+
+
+    // Console.ReadLine(); 
+}
+catch (Exception e)
+{
+    Console.WriteLine(e.ToString());
+    // Console.ReadLine();
+}
+// try
+// {
+//     SapEamProcessor.ProcessSapEam();
+// }
+// catch(Exception e)
+// {
+//     Console.WriteLine(e.ToString());
+//     Console.ReadLine();
+// }
